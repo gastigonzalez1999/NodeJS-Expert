@@ -1,5 +1,7 @@
 const { crearArchivo } = require('./helpers/multiplicar');
 const argv = require('./config/yargs');
+const colors = require('colors');
+
 console.clear();
 
 //******* Forma sin paquete yargs ********//
@@ -9,8 +11,8 @@ console.clear();
 
 //const base = 3;
 
-crearArchivo(argv.b, argv.l)
-    .then(nombreArchivo => console.log(nombreArchivo))
+crearArchivo(argv.b, argv.l, argv.h)
+    .then(nombreArchivo => console.log(nombreArchivo.rainbow))
     .catch(err => console.log(err));
 
 
