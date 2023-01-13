@@ -1,4 +1,6 @@
-import { inquirerMenu, leerInput, pausa } from "./helpers/inquirer"
+import dotenv from 'dotenv'
+dotenv.config();
+import { inquirerMenu, leerInput, listarLugares, pausa } from "./helpers/inquirer"
 import { Busquedas } from "./models/busquedas";
 
 const main = async () => {
@@ -9,8 +11,30 @@ const main = async () => {
 
         switch (opt) {
             case '1':
-                const desc = await leerInput('Descripcion:');
-                tareas.crearTarea(desc);
+                // Mostrar mensaje
+                const lugar = await leerInput('Ciudad:');
+
+                // Buscar los lugares
+                const lugares = await busquedas.ciudad(lugar);
+
+                // Seleccionar el lugar
+                const id = await listarLugares(lugares);
+                const lugarSeleccionado = lugares.find(l => l.id === id);
+
+                // Clima
+                const clima = await busquedas.climaLugar(lugarSeleccionado.lat, lugarSeleccionado.lng);
+
+                // Mostrar resultados
+                console.clear();
+                console.log('\nInformacion de la ciudad\n');
+                console.log('Ciudad', lugarSeleccionado.nombre.green);
+                console.log('Lat', lugarSeleccionado.lat);
+                console.log('Lng', lugarSeleccionado.lng);
+                console.log('Temp', clima.temp);
+                console.log('Minima', clima.min);
+                console.log('Maxima', clima.max);
+                console.log('Como esta el clima', clima.desc.green);
+
             break;
 
             case '2':
@@ -28,17 +52,6 @@ const main = async () => {
             case '5':
                 const ids = await mostrarListadoChecklist(tareas.listadoArr);
                 tareas.marcarCompletadas(ids);
-            break;
-
-            case '6':
-                const id = await listadoTareasBorrar(tareas.listadoArr);
-                const ok = confirmar('Estas seguro?');
-                if (id !== 0) {
-                    if (ok) {
-                        tareas.borrarTarea(id);
-                        console.log('Tarea borrada');
-                    }
-                }
             break;
 
             default:
