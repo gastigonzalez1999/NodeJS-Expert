@@ -19,7 +19,10 @@ const main = async () => {
 
                 // Seleccionar el lugar
                 const id = await listarLugares(lugares);
+                if (id === '0') continue;
+
                 const lugarSeleccionado = lugares.find(l => l.id === id);
+                busquedas.agregarHistorial(lugarSeleccionado.nombre);
 
                 // Clima
                 const clima = await busquedas.climaLugar(lugarSeleccionado.lat, lugarSeleccionado.lng);
@@ -38,20 +41,10 @@ const main = async () => {
             break;
 
             case '2':
-                tareas.listadoCompleto();
-            break;
-
-            case '3':
-                tareas.listarPendientesCompletadas(true);
-            break;
-
-            case '4':
-                tareas.listarPendientesCompletadas(false);
-            break;
-
-            case '5':
-                const ids = await mostrarListadoChecklist(tareas.listadoArr);
-                tareas.marcarCompletadas(ids);
+                busquedas.historal.forEach((lugar, i) => {
+                    const idx = `${i + 1}`.green;
+                    console.log(`${idx} ${lugar}`);
+                })
             break;
 
             default:

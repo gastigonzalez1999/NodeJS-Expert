@@ -1,7 +1,9 @@
 import axios from "axios";
+import fs from "fs";
 
 export class Busquedas {
     historal = [];
+    dbPath = './db/database.json';
 
     constructor() {
 
@@ -21,6 +23,10 @@ export class Busquedas {
             units: 'metric',
             lang: 'es',
         }
+    }
+
+    getHistoriaCapitalizado () {
+        
     }
 
     async ciudad(lugar = '') { 
@@ -63,6 +69,35 @@ export class Busquedas {
         } catch (error) {
             return [];
         }
+    }
+
+    agregarHistorial(lugar = '') {
+        if (this.historal.includes(lugar.toLocaleLowerCase())) {
+            return;
+        }
+
+        this.historal.unshift(lugar.toLocaleLowerCase());
+
+        this.guardarDb();
+    }
+
+    guardarDb() {
+        const payload = {
+            historial: this.historal
+        };
+
+        fs.writeFileSync(this.dbPath, JSON.stringify(payload));
+    }
+
+    leerDb() {
+        if (!fs.existsSync(this.dbPath)) {
+            return null;
+        }
+    
+        const info = fs.readFileSync(this.dbPath, { encoding: 'utf-8' });
+        const data = JSON.parse(info);
+    
+        this.historal = data.historal;
     }
 
 }
