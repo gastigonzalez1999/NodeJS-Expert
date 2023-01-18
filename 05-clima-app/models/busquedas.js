@@ -26,7 +26,12 @@ export class Busquedas {
     }
 
     getHistoriaCapitalizado () {
-        
+        return this.historal.map(lugar => {
+            let palabras = lugar.split(' ');
+            palabras = palabras.map(p => p[0].toUpperCase() + p.substring(1));
+
+            return palabras.join(' ');
+        })
     }
 
     async ciudad(lugar = '') { 

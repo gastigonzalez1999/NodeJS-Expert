@@ -41,7 +41,7 @@ const main = async () => {
             break;
 
             case '2':
-                busquedas.historal.forEach((lugar, i) => {
+                busquedas.getHistoriaCapitalizado.forEach((lugar, i) => {
                     const idx = `${i + 1}`.green;
                     console.log(`${idx} ${lugar}`);
                 })
