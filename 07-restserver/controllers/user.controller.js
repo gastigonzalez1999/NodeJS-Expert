@@ -1,4 +1,7 @@
 const { response } = require('express');
+const bcrypt = require('bcryptjs');
+const User = require('../models/user');
+const e = require('express');
 
 const getUsers = (req, res = response) => {
     const { query, nombre, apiKey, page, limit } = req.query;
@@ -13,13 +16,27 @@ const getUsers = (req, res = response) => {
     });
 };
 
-const postUser = (req, res = response) => {
-    const { nombre, edad } = req.body; 
+const postUser = async (req, res = response) => {
 
-    res.json({
+    const { name, email, password, role } = req.body;
+    const user = new User({ name, email, password, role });
+
+    const emailExist = await User.findOne({ email: email });
+
+    if (emailExist) {
+        return res.status(400).json({
+            error: 'The mail is already registered'
+        });
+    }
+
+    const salt = bcrypt.genSaltSync();
+    user.password = bcrypt.hashSync(password, salt);
+
+    await user.save();
+
+    res.json({ 
         msg: 'post API',
-        nombre,
-        edad,
+        user,
     });
 };
 
