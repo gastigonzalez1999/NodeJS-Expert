@@ -6,8 +6,13 @@ const userSchema = Schema({
     password: { type: String, required: [true, 'La password es obligatoria'] },
     img: { type: String },
     role: { type: String, required: true, enum: ['ADMIN', 'USER'] },
-    estado: { type: Boolean, default: true },
+    state: { type: Boolean, default: true },
     google: { type: Boolean, default: false },
 });
+
+userSchema.methods.toJSON = function () {
+    const { __v, password, ...user } = this.toObject();
+    return user;
+}
 
 module.exports = model('Usuario', userSchema);

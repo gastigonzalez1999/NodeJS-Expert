@@ -3,16 +3,20 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const e = require('express');
 
-const getUsers = (req, res = response) => {
-    const { query, nombre, apiKey, page, limit } = req.query;
+const getUsers = async (req, res = response) => {
+    const { limit = 5, from = 5} = req.query;
+    const query = { state : true};
+
+    const [total, users] = await Promise.all([
+        User.countDocuments(query),
+        User.find(query)
+            .skip(Number(from))
+            .limit(Number(limit)),
+    ]);
 
     res.json({
-        msg: 'get API',
-        query,
-        nombre,
-        apiKey,
-        page, 
-        limit,
+       total,
+       users,
     });
 };
 
@@ -21,17 +25,9 @@ const postUser = async (req, res = response) => {
     const { name, email, password, role } = req.body;
     const user = new User({ name, email, password, role });
 
-    const emailExist = await User.findOne({ email: email });
-
-    if (emailExist) {
-        return res.status(400).json({
-            error: 'The mail is already registered'
-        });
-    }
-
     const salt = bcrypt.genSaltSync();
     user.password = bcrypt.hashSync(password, salt);
-
+ 
     await user.save();
 
     res.json({ 
@@ -40,18 +36,32 @@ const postUser = async (req, res = response) => {
     });
 };
 
-const putUser = (req, res = response) => {
+const putUser =  async (req, res = response) => {
     const id = req.params.id;
+    const { _id, password, google, email, ...rest } = req.body;
+
+    if (password) {
+        const salt = bcrypt.genSaltSync();
+        rest.password = bcrypt.hashSync(password, salt);
+    }
+
+    const user = await User.findByIdAndUpdate(id, rest);
 
     res.json({
         msg: 'put API',
-        id,
+        user,
     });
 };
 
-const deleteUser = (req, res = response) => {
+const deleteUser = async (req, res = response) => {
+    const id = req.params.id;
+
+    //const user = await User.findByIdAndDelete(id);
+
+    const user = await User.findByIdAndUpdate(id, { state: true });
+
     res.json({
-        msg: 'delete API',
+        user,
     });
 };
 
