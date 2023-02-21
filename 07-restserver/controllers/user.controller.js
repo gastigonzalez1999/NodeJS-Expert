@@ -55,13 +55,14 @@ const putUser =  async (req, res = response) => {
 
 const deleteUser = async (req, res = response) => {
     const id = req.params.id;
-
     //const user = await User.findByIdAndDelete(id);
 
     const user = await User.findByIdAndUpdate(id, { state: true });
+    const authenticatedUser = req.user;
 
     res.json({
         user,
+        authenticatedUser,
     });
 };
 
