@@ -5,7 +5,7 @@ const e = require('express');
 
 const getUsers = async (req, res = response) => {
     const { limit = 5, from = 5} = req.query;
-    const query = { state : true};
+    const query = { status : true};
 
     const [total, users] = await Promise.all([
         User.countDocuments(query),
@@ -57,7 +57,7 @@ const deleteUser = async (req, res = response) => {
     const id = req.params.id;
     //const user = await User.findByIdAndDelete(id);
 
-    const user = await User.findByIdAndUpdate(id, { state: true });
+    const user = await User.findByIdAndUpdate(id, { status: true });
     const authenticatedUser = req.user;
 
     res.json({
