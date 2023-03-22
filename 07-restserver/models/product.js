@@ -8,6 +8,7 @@ const ProductSchema = Schema({
     category: { type: SchemaTypes.ObjectId, ref: 'Category', required: true },
     description: { type: String },
     available: { type: Boolean, default: true },
+    img: { type: String },
 });
 
 ProductSchema.methods.toJSON = function () {
